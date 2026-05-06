@@ -1,0 +1,30 @@
+name: CI Pipeline
+
+# Define quando o workflow será executado
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    - name: Validar sintaxe do Dockerfile
+      run: |
+        docker build -t lab-image:test .
+        echo "Build do Docker realizado com sucesso!"
+
+    - name: Teste Simples (Check Index)
+      run: |
+        if grep -q "<html>" index.html; then
+          echo "Arquivo index.html validado."
+        else
+          echo "Erro: index.html não parece um arquivo HTML válido."
+          exit 1
+        fi
